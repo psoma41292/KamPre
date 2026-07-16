@@ -20,8 +20,7 @@ import LoadingState from "./components/LoadingState";
 import ErrorState from "./components/ErrorState";
 import PriceChart from "./components/PriceChart";
 import FavoritesPanel from "./components/FavoritesPanel";
-import { fetchComparison } from "./services/api";
-import { saveFavorite } from "./services/api";
+import { fetchComparison, saveFavorite, deleteFavorite } from "./services/api";
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -96,10 +95,18 @@ export default function App() {
     const key = name.toLowerCase().trim();
     if (savedItems.has(key)) {
       setSavedItems((prev) => { const s = new Set(prev); s.delete(key); return s; });
+      await deleteFavorite(key).catch(() => {});
     } else {
       setSavedItems((prev) => new Set(prev).add(key));
       await saveFavorite({ name }).catch(() => {});
     }
+  };
+
+  // Called by FavoritesPanel when the user removes an item from the panel,
+  // so the local savedItems Set stays in sync.
+  const handleFavoriteRemoved = (name) => {
+    const key = name.toLowerCase().trim();
+    setSavedItems((prev) => { const s = new Set(prev); s.delete(key); return s; });
   };
 
   // Calculate total savings vs highest price
@@ -370,6 +377,7 @@ export default function App() {
         isOpen={favoritesOpen}
         onClose={() => setFavoritesOpen(false)}
         onSearch={handleSearch}
+        onRemove={handleFavoriteRemoved}
       />
     </div>
   );

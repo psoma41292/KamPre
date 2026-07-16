@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchFavorites, saveFavorite, deleteFavorite } from "../services/api";
 
-export default function FavoritesPanel({ isOpen, onClose, onSearch }) {
+export default function FavoritesPanel({ isOpen, onClose, onSearch, onRemove }) {
   const [favorites, setFavorites] = useState([]);
   const [loadingFavs, setLoadingFavs] = useState(false);
 
@@ -24,6 +24,7 @@ export default function FavoritesPanel({ isOpen, onClose, onSearch }) {
     try {
       await deleteFavorite(name);
       setFavorites((prev) => prev.filter((f) => f.name.toLowerCase() !== name.toLowerCase()));
+      onRemove?.(name);
     } catch {
       // silently ignore
     }
