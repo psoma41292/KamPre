@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# KamPre
+=======
 # 🛒 KamPare — Compare Smart. Save More.
 
 A full-stack grocery price comparison web app that lets users search for items
@@ -225,3 +228,4 @@ cd frontend && npm run build
 ---
 
 *Made with ❤️ — KamPare*
+>>>>>>> b28b56b338c0242116cea9e1170939cef4b0ecda
