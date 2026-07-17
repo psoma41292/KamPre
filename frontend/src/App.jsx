@@ -20,9 +20,16 @@ import LoadingState from "./components/LoadingState";
 import ErrorState from "./components/ErrorState";
 import PriceChart from "./components/PriceChart";
 import FavoritesPanel from "./components/FavoritesPanel";
+import LoginModal from "./components/LoginModal";
+import ConnectedAccounts from "./components/ConnectedAccounts";
 import { fetchComparison, saveFavorite, deleteFavorite } from "./services/api";
+import { useAuth } from "./context/AuthContext";
 
 export default function App() {
+  const { user, isLoggedIn, logout } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [accountsOpen, setAccountsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState(null);       // null = initial state, [] = searched but empty
   const [quantityGroups, setQuantityGroups] = useState([]);  // grouped by quantity tier
@@ -164,6 +171,78 @@ export default function App() {
                 </span>
               )}
             </button>
+
+            {/* ── Auth / User section ─────────────────────────────────── */}
+            {!isLoggedIn ? (
+              <button
+                onClick={() => setLoginOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white bg-brand-green hover:bg-emerald-700 rounded-xl transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="hidden sm:inline">Sign In</span>
+              </button>
+            ) : (
+              /* Logged-in user dropdown */
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  {/* Avatar initial */}
+                  <div className="w-7 h-7 rounded-full bg-brand-green text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    {user?.name?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  <span className="hidden sm:inline max-w-[100px] truncate">{user?.name}</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {userMenuOpen && (
+                  <>
+                    {/* Backdrop to close on outside click */}
+                    <div className="fixed inset-0 z-20" onClick={() => setUserMenuOpen(false)} />
+                    <div className="absolute right-0 top-full mt-1.5 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-30 overflow-hidden">
+                      {/* User info */}
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-800 truncate">{user?.name}</p>
+                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                        {/* Connected count */}
+                        {Object.keys(user?.connectedAccounts || {}).length > 0 && (
+                          <p className="text-xs text-brand-green mt-0.5 font-medium">
+                            {Object.keys(user.connectedAccounts).length} platform{Object.keys(user.connectedAccounts).length > 1 ? "s" : ""} linked
+                          </p>
+                        )}
+                      </div>
+                      {/* Menu items */}
+                      <button
+                        onClick={() => { setUserMenuOpen(false); setAccountsOpen(true); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        Connected Accounts
+                      </button>
+                      <button
+                        onClick={() => { setUserMenuOpen(false); logout(); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors border-t border-gray-100"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -379,6 +458,10 @@ export default function App() {
         onSearch={handleSearch}
         onRemove={handleFavoriteRemoved}
       />
+
+      {/* ── Auth Modals ── */}
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+      <ConnectedAccounts isOpen={accountsOpen} onClose={() => setAccountsOpen(false)} />
     </div>
   );
 }

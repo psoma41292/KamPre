@@ -8,6 +8,13 @@ import axios from "axios";
 
 const api = axios.create({ baseURL: "/api" });
 
+// Attach JWT token from localStorage to every request when available
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("kampare_token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 /**
  * Fetch price comparisons for an item.
  * @param {string} item

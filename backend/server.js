@@ -12,6 +12,7 @@ const compareRoutes = require("./routes/compare");
 const categoriesRoutes = require("./routes/categories");
 const favoritesRoutes = require("./routes/favorites");
 const groceriesRoutes = require("./routes/groceries");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +34,7 @@ app.use("/api/", limiter);
 
 // ── Routes ─────────────────────────────────────────────────────────────────────
 
+app.use("/api/auth", authRoutes);
 app.use("/api/compare", compareRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/favorites", favoritesRoutes);
