@@ -1,0 +1,107 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>KamPare Technical Summary</title>
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: #1f2328;
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 24px 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+    .subtitle {
+      color: #57606a;
+      margin-bottom: 24px;
+    }
+    .section {
+      margin-top: 22px;
+      padding: 16px 18px;
+      background: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      color: #3b82d4;
+    }
+    p {
+      margin: 0;
+    }
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+    li { margin: 4px 0; }
+    footer {
+      margin-top: 28px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 12px;
+      color: #57606a;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>KamPare – High-Level Technical Summary</h1>
+    <div class="subtitle">Prepared for stakeholder review</div>
+
+    <div class="section">
+      <h2>Overview</h2>
+      <p>KamPare is a grocery price comparison web application that helps users search for common grocery items and compare prices across multiple retail platforms. Its goal is to make price checking faster, highlight the best available deal, and support informed buying decisions. The application also supports user login, saved favorites, and linked platform accounts for a more personalised experience.</p>
+    </div>
+
+    <div class="section">
+      <h2>Architecture Summary</h2>
+      <p>The system uses a simple client-server architecture. The frontend is a single-page React application that handles search, result views, authentication screens, and user interactions. The backend is a Node.js and Express API that exposes endpoints for comparison, categories, favorites, grocery catalog data, and authentication. Business logic is handled in a service layer, which calculates best deal and best value metrics, groups products by quantity, and caches responses for faster repeat searches. Data currently comes from a mock product dataset, with optional live price lookup through SerpAPI. Favorites and some user-related features are currently stored in memory, while MongoDB support exists as an optional persistence path.</p>
+    </div>
+
+    <div class="section">
+      <h2>Key Technologies</h2>
+      <ul>
+        <li>React and Vite for the frontend user interface</li>
+        <li>Tailwind CSS for styling</li>
+        <li>Axios for frontend-backend API communication</li>
+        <li>Node.js and Express for backend services</li>
+        <li>NodeCache for in-memory caching</li>
+        <li>JSON Web Tokens for authentication</li>
+        <li>MongoDB and Mongoose as optional database components</li>
+        <li>Recharts for price visualisation</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Core Components</h2>
+      <ul>
+        <li>Search and suggestion module: captures user queries and returns matching items</li>
+        <li>Comparison engine: retrieves product data, normalises quantities, and ranks deals</li>
+        <li>Results interface: shows cards, tables, charts, and best-deal summaries</li>
+        <li>Authentication module: manages registration, login, token-based sessions, and account linking</li>
+        <li>Favorites module: saves and removes frequently searched items</li>
+        <li>Catalog and category services: provide browseable grocery and category data</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Data Flow</h2>
+      <p>A user enters a grocery item in the frontend search bar. The frontend sends the request to backend API endpoints using Axios. The backend processes the request through Express routes and the price service, which fetches live or mock data, enriches it with calculated values such as price per unit, determines the best options, and caches the result. The response is then returned to the frontend, where it is displayed as banners, cards, tables, and charts. For logged-in users, authentication tokens are included in API requests so account and favorites features can be used.</p>
+    </div>
+
+    <footer>Made with IBM Bob</footer>
+  </div>
+</body>
+</html>
